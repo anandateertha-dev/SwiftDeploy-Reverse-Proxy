@@ -2,8 +2,11 @@ const express = require('express')
 const httpProxy = require('http-proxy')
 const { PrismaClient } = require('@prisma/client')
 const app = express()
-const PORT = 8000
 const { stringify, parse } = require("uuid")
+const dotenv = require('dotenv')
+
+dotenv.config();
+const PORT = process.env.PORT || 8000
 
 const proxy = httpProxy.createProxy()
 
@@ -40,7 +43,9 @@ app.use(async (req, res) => {
 
         const deploymentId = bufferToUUID(deployment.deployment_id)
 
-        const BASE_PATH = `https://swiftdeploy.s3.ap-south-1.amazonaws.com/${userId}/${projectId}/${deploymentId}/`
+        const MAIN_PATH=process.env.DOMAIN_PATH
+
+        const BASE_PATH = `${MAIN_PATH}/${userId}/${projectId}/${deploymentId}/`
 
         const resolvesTo = BASE_PATH
 
