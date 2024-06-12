@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model UserModel {
+  user_id   Bytes   @id @db.Binary(16)
+  email     String? @unique(map: "UK_dblqohn12gnwaod4iyep1c3hb") @db.VarChar(255)
+  password  String? @db.VarChar(255)
+  user_name String? @unique(map: "UK_8rvo8ud83gq6avjhyhcrox099") @db.VarChar(255)
+
+  @@map("user_db")
+}
+
+model ProjectModel {
+  project_id       Bytes             @id @db.Binary(16)
+  created_at       DateTime?         @db.Date
+  custom_domain    String?           @db.VarChar(255)
+  giturl           String?           @db.VarChar(255)
+  project_name     String?           @db.VarChar(255)
+  sub_domain       String?           @db.VarChar(255)
+  user_id          Bytes?            @db.Binary(16)
+  deployment_model DeploymentModel[]
+
+  @@map("project_model")
+}
+
+model DeploymentModel {
+  deployment_id Bytes        @id @db.Binary(16)
+  created_at    DateTime?    @db.Date
+  project_id    Bytes        @db.Binary(16)
+  project_model ProjectModel @relation(fields: [project_id], references: [project_id], onDelete: NoAction, onUpdate: NoAction, map: "FKp8s4qh7gaqp7j53c8lfj8dg9j")
+
+  @@index([project_id], map: "FKp8s4qh7gaqp7j53c8lfj8dg9j")
+  @@map("deployment_model")
+}
